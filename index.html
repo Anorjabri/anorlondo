@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Текстурпаки для CosmicBedrock</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .hero {
+            background-color: #333;
+            color: #fff;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            max-width: 280px;
+            margin: 0 auto;
+            text-align: center;
+            padding-bottom: 15px;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card img {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+        }
+        .card h2 {
+            font-size: 1.3rem;
+            margin: 10px 0;
+        }
+        .card p {
+            font-size: 1rem;
+            color: #555;
+            margin: 5px 10px 15px;
+        }
+        .download-button {
+            display: inline-block;
+            background-color: #28a745;
+            color: #fff;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease-in-out, transform 0.2s;
+            font-weight: bold;
+        }
+        .download-button:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .info-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 50px;
+            font-size: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            border: none;
+        }
+        .info-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+
+        /* Кнопки Telegram с анимацией */
+        .telegram-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .telegram-button img {
+            width: 50px;
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+        .telegram-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .telegram-button:hover img {
+            transform: scale(1.2);
+        }
+
+        .telegram-button-2 {
+            position: fixed;
+            top: 20px;
+            left: 80px; /* Slightly to the right of the first button */
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .telegram-button-2 img {
+            width: 50px;
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+        .telegram-button-2:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .telegram-button-2:hover img {
+            transform: scale(1.2);
+        }
+
+        .telegram-button-3 {
+            position: fixed;
+            top: 20px;
+            left: 140px; /* Slightly to the right of the second button */
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .telegram-button-3 img {
+            width: 50px;
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+        .telegram-button-3:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+        .telegram-button-3:hover img {
+            transform: scale(1.2);
+        }
+
+        /* Затемнение фона */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            z-index: 999;
+        }
+        
+        /* Модальное окно */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
+        }
+
+        /* Активные стили (когда окно открыто) */
+        .modal.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+            visibility: visible;
+        }
+        .overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .close-button {
+            background: red;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s ease-in-out;
+        }
+        .close-button:hover {
+            background: darkred;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>Текстурпаки для CosmicBedrock</h1>
+        <p>Лучшие текстуры для вашего Minecraft!</p>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <img src="img/texture1.jpg" alt="Текстурпак 1">
+            <div class="card-content">
+                <h2>AnorLondo</h2>
+                <p>Специальный РП для декораций в Анорлондо.</p>
+                <a href="packs\anorlondo.zip" class="download-button">Скачать</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="img/texture2.jpg" alt="Текстурпак 2">
+            <div class="card-content">
+                <h2>CosmicPack</h2>
+                <p>Ресурспак сервера(DLC вместе).</p>
+                <a href="packs\cosmicpack.zip" class="download-button">Скачать</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="img/texture3.jpg" alt="Текстурпак 3">
+            <div class="card-content">
+                <h2>Столица</h2>
+                <p>тимкей.</p>
+                <a href="packs\capital.zip" class="download-button">Скачать</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопки Telegram -->
+    <a href="https://t.me/+wRSRv9SRegs2NWJi" target="_blank">
+        <button class="telegram-button">
+            <img src="img/tg_anorlondo.jpg" alt="Telegram">
+        </button>
+    </a>
+
+    <a href="https://t.me/+wRSRv9SRegs2NWJi" target="_blank">
+        <button class="telegram-button-2">
+            <img src="img/tg_capital.jpg" alt="Telegram">
+        </button>
+    </a>
+
+    <a href="https://t.me/+wRSRv9SRegs2NWJi" target="_blank">
+        <button class="telegram-button-3">
+            <img src="img/tg_antegria.jpg" alt="Telegram">
+        </button>
+    </a>
+
+    <!-- Кнопка информации -->
+    <button class="info-button" onclick="openModal()">ℹ Информация</button>
+
+    <!-- Затемнение -->
+    <div class="overlay" id="overlay" onclick="closeModal()"></div>
+
+    <!-- Модальное окно -->
+    <div class="modal" id="infoModal">
+        <h2>О сайте</h2>
+        <p>Этот сайт сделан за 30 минут анором. tg:@anorjabri</p>
+        <button class="close-button" onclick="closeModal()">Закрыть</button>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById("infoModal").classList.add("show");
+            document.getElementById("overlay").classList.add("show");
+        }
+
+        function closeModal() {
+            document.getElementById("infoModal").classList.remove("show");
+            document.getElementById("overlay").classList.remove("show");
+        }
+    </script>
+</body>
+</html>
