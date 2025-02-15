@@ -88,7 +88,7 @@
             transform: scale(1.1);
         }
 
-        /* Кнопки Telegram с анимацией */
+        /* Кнопки Telegram */
         .telegram-button {
             position: fixed;
             top: 20px;
@@ -116,7 +116,7 @@
         .telegram-button-2 {
             position: fixed;
             top: 20px;
-            left: 80px; /* Slightly to the right of the first button */
+            left: 80px;
             background: transparent;
             border: none;
             padding: 0;
@@ -140,7 +140,7 @@
         .telegram-button-3 {
             position: fixed;
             top: 20px;
-            left: 140px; /* Slightly to the right of the second button */
+            left: 140px;
             background: transparent;
             border: none;
             padding: 0;
@@ -161,6 +161,27 @@
             transform: scale(1.2);
         }
 
+        /* Кнопка anorface */
+        .anorface-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #ff5722;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            border: none;
+        }
+        .anorface-button:hover {
+            background-color: #e64a19;
+            transform: scale(1.1);
+        }
+
         /* Затемнение фона */
         .overlay {
             position: fixed;
@@ -174,7 +195,7 @@
             transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
             z-index: 999;
         }
-        
+
         /* Модальное окно */
         .modal {
             position: fixed;
@@ -232,25 +253,25 @@
             <div class="card-content">
                 <h2>anorlondo</h2>
                 <p>Специальный РП для декораций в Анорлондо.</p>
-                <a href="packs\anorlondo.zip" class="download-button">Скачать</a>
+                <a href="packs/anorlondo.zip" class="download-button">Скачать</a>
             </div>
         </div>
 
         <div class="card">
-            <img src="img\texture2.jpg" alt="Текстурпак 2">
+            <img src="img/texture2.jpg" alt="Текстурпак 2">
             <div class="card-content">
                 <h2>CosmicPack</h2>
                 <p>Ресурспак сервера(DLC вместе).</p>
-                <a href="packs\cosmicpack.zip" class="download-button">Скачать</a>
+                <a href="packs/cosmicpack.zip" class="download-button">Скачать</a>
             </div>
         </div>
 
         <div class="card">
-            <img src="img\texture3.jpg" alt="Текстурпак 3">
+            <img src="img/texture3.jpg" alt="Текстурпак 3">
             <div class="card-content">
                 <h2>Столица</h2>
                 <p>тимкей.</p>
-                <a href="packs\capital.zip" class="download-button">Скачать</a>
+                <a href="packs/capital.zip" class="download-button">Скачать</a>
             </div>
         </div>
     </div>
@@ -258,33 +279,44 @@
     <!-- Кнопки Telegram -->
     <a href="https://t.me/+wRSRv9SRegs2NWJi" target="_blank">
         <button class="telegram-button">
-            <img src="img\tg_anorlondo.jpg" alt="Telegram">
+            <img src="img/tg_anorlondo.jpg" alt="Telegram">
         </button>
     </a>
 
-    <a href=https://t.me/+soq0CY-FBFxkNzBi" target="_blank">
+    <a href="https://t.me/+soq0CY-FBFxkNzBi" target="_blank">
         <button class="telegram-button-2">
-            <img src="img\tg_capital.jpg" alt="Telegram">
+            <img src="img/tg_capital.jpg" alt="Telegram">
         </button>
     </a>
 
     <a href="https://t.me/+k52fhZ4pZfJjMjUy" target="_blank">
         <button class="telegram-button-3">
-            <img src="img\tg_antegria.jpg" alt="Telegram">
+            <img src="img/tg_antegria.jpg" alt="Telegram">
         </button>
     </a>
 
     <!-- Кнопка информации -->
     <button class="info-button" onclick="openModal()">ℹ Информация</button>
 
-    <!-- Затемнение -->
-    <div class="overlay" id="overlay" onclick="closeModal()"></div>
+    <!-- Кнопка для скачивания anorface -->
+    <button class="anorface-button" onclick="openAnorfaceModal()">!!!</button>
 
-    <!-- Модальное окно -->
+    <!-- Затемнение -->
+    <div class="overlay" id="overlay" onclick="closeModal(); closeAnorfaceModal()"></div>
+
+    <!-- Модальное окно информации -->
     <div class="modal" id="infoModal">
         <h2>О сайте</h2>
         <p>Этот сайт сделан за 30 минут анором. tg:@anorjabri</p>
         <button class="close-button" onclick="closeModal()">Закрыть</button>
+    </div>
+
+    <!-- Модальное окно для anorface -->
+    <div class="modal" id="anorfaceModal">
+        <h2>Скачать anorface!!!</h2>
+        <p>Текстурпак anorface!!! заменяет всем мобам лица на лицо анора.</p>
+        <a href="packs/anorface.zip" class="download-button">Скачать anorface</a>
+        <button class="close-button" onclick="closeAnorfaceModal()">Закрыть</button>
     </div>
 
     <script>
@@ -295,6 +327,16 @@
 
         function closeModal() {
             document.getElementById("infoModal").classList.remove("show");
+            document.getElementById("overlay").classList.remove("show");
+        }
+
+        function openAnorfaceModal() {
+            document.getElementById("anorfaceModal").classList.add("show");
+            document.getElementById("overlay").classList.add("show");
+        }
+
+        function closeAnorfaceModal() {
+            document.getElementById("anorfaceModal").classList.remove("show");
             document.getElementById("overlay").classList.remove("show");
         }
     </script>
