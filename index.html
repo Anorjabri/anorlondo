@@ -88,8 +88,7 @@
             transform: scale(1.1);
         }
 
-        /* Кнопки Telegram */
-        .telegram-button {
+        .telegram-button, .telegram-button-2, .telegram-button-3 {
             position: fixed;
             top: 20px;
             left: 20px;
@@ -100,68 +99,26 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .telegram-button img {
+        .telegram-button img, .telegram-button-2 img, .telegram-button-3 img {
             width: 50px;
             height: 50px;
             transition: transform 0.3s ease;
         }
-        .telegram-button:hover {
+        .telegram-button:hover, .telegram-button-2:hover, .telegram-button-3:hover {
             transform: scale(1.1);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         }
-        .telegram-button:hover img {
+        .telegram-button:hover img, .telegram-button-2:hover img, .telegram-button-3:hover img {
             transform: scale(1.2);
         }
 
         .telegram-button-2 {
-            position: fixed;
-            top: 20px;
             left: 80px;
-            background: transparent;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .telegram-button-2 img {
-            width: 50px;
-            height: 50px;
-            transition: transform 0.3s ease;
-        }
-        .telegram-button-2:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-        .telegram-button-2:hover img {
-            transform: scale(1.2);
-        }
-
         .telegram-button-3 {
-            position: fixed;
-            top: 20px;
             left: 140px;
-            background: transparent;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .telegram-button-3 img {
-            width: 50px;
-            height: 50px;
-            transition: transform 0.3s ease;
-        }
-        .telegram-button-3:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-        .telegram-button-3:hover img {
-            transform: scale(1.2);
         }
 
-        /* Кнопка anorface */
         .anorface-button {
             position: fixed;
             bottom: 20px;
@@ -182,7 +139,27 @@
             transform: scale(1.1);
         }
 
-        /* Затемнение фона */
+        .airplane {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            animation: fly 20s linear infinite;
+            z-index: 1001;
+        }
+        .airplane img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes fly {
+            0% { transform: translate(-100%, -100%) rotate(0deg); }
+            100% { transform: translate(100vw, 100vh) rotate(360deg); }
+        }
+
         .overlay {
             position: fixed;
             top: 0;
@@ -196,7 +173,6 @@
             z-index: 999;
         }
 
-        /* Модальное окно */
         .modal {
             position: fixed;
             top: 50%;
@@ -215,7 +191,6 @@
             transition: transform 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
         }
 
-        /* Активные стили (когда окно открыто) */
         .modal.show {
             transform: translate(-50%, -50%) scale(1);
             opacity: 1;
@@ -238,6 +213,27 @@
         }
         .close-button:hover {
             background: darkred;
+        }
+
+        .meme-button {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #ffc107;
+            color: black;
+            padding: 12px 18px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            border: none;
+            z-index: 1002;
+        }
+        .meme-button:hover {
+            background-color: #e0a800;
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -298,11 +294,16 @@
     <!-- Кнопка информации -->
     <button class="info-button" onclick="openModal()">ℹ Информация</button>
 
-    <!-- Кнопка для скачивания anorface -->
-    <button class="anorface-button" onclick="openAnorfaceModal()">!!!</button>
+    <!-- Кнопка "Мем недели" -->
+    <button class="meme-button" onclick="openMemeModal()">Мем недели</button>
+
+    <!-- Летающий самолет -->
+    <div class="airplane" onclick="openAnorfaceModal()">
+        <img src="img/airplane.png" alt="Самолет">
+    </div>
 
     <!-- Затемнение -->
-    <div class="overlay" id="overlay" onclick="closeModal(); closeAnorfaceModal()"></div>
+    <div class="overlay" id="overlay" onclick="closeModal(); closeAnorfaceModal(); closeMemeModal()"></div>
 
     <!-- Модальное окно информации -->
     <div class="modal" id="infoModal">
@@ -313,10 +314,17 @@
 
     <!-- Модальное окно для anorface -->
     <div class="modal" id="anorfaceModal">
-        <h2>Скачать anorface!!!</h2>
-        <p>Текстурпак anorface!!! заменяет всем мобам лица на лицо анора.</p>
+        <h2>Скачать anorface</h2>
+        <p>Текстурпак anorface для CosmicBedrock.</p>
         <a href="packs/anorface.zip" class="download-button">Скачать anorface</a>
         <button class="close-button" onclick="closeAnorfaceModal()">Закрыть</button>
+    </div>
+
+    <!-- Модальное окно для мема -->
+    <div class="modal" id="memeModal">
+        <h2>Мем недели</h2>
+        <img src="img/meme_of_the_week.jpg" alt="Мем недели" style="width: 100%; border-radius: 10px;">
+        <button class="close-button" onclick="closeMemeModal()">Закрыть</button>
     </div>
 
     <script>
@@ -337,6 +345,16 @@
 
         function closeAnorfaceModal() {
             document.getElementById("anorfaceModal").classList.remove("show");
+            document.getElementById("overlay").classList.remove("show");
+        }
+
+        function openMemeModal() {
+            document.getElementById("memeModal").classList.add("show");
+            document.getElementById("overlay").classList.add("show");
+        }
+
+        function closeMemeModal() {
+            document.getElementById("memeModal").classList.remove("show");
             document.getElementById("overlay").classList.remove("show");
         }
     </script>
