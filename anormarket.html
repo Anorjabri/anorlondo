@@ -1,1 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>anormarket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        .back-button {
+            text-decoration: none;
+            color: black;
+            font-size: 14px;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .nav-links, .right-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            padding: 0;
+        }
+        .nav-links a, .right-links a {
+            text-decoration: none;
+            color: black;
+            font-size: 14px;
+        }
+        .product-grid, .vinyl-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .product {
+            width: 250px;
+            position: relative;
+            cursor: pointer;
+        }
+        .product img {
+            width: 100%;
+            border-radius: 10px;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .product .front {
+            opacity: 1;
+        }
+        .product .back {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .product:hover .front {
+            opacity: 0;
+        }
+        .product:hover .back {
+            opacity: 1;
+        }
+        .product p {
+            margin: 10px 0 0;
+            font-size: 14px;
+            text-align: center;
+        }
+        .privacy-policy {
+            margin-top: 40px;
+            padding: 20px;
+            background: #f1f1f1;
+            font-size: 12px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html" class="back-button">Back</a>
+        <div class="logo">anormarket</div>
+        <ul class="right-links">
+            <li><a href="#">Information</a></li>
+            <li><a href="#">Search</a></li>
+            <li><a href="#">Soundcloud</a></li>
+            <li><a href="#">Cart</a></li>
+        </ul>
+    </div>
+    <div class="product-grid">
+        <div class="product">
+            <img src="img/white.png" alt="Yori Sport Black/Purple" class="front">
+            <img src="img/white_back.png" alt="Yori Sport Black/Purple Back" class="back">
+            <p>AnorlondoSport<br>Text Zip-up (White)<br>K£125</p>
+        </div>
+        <div class="product">
+            <img src="img/dmitriy_jeans.png" alt="Yori Sport Black/White" class="front">
+            <img src="img/dmitriy_jeans_back.png" alt="Yori Sport Black/White Back" class="back">
+            <p>Dmitriy Jeans<br>Jeans (Black)<br>K£125</p>
+        </div>
+        <div class="product">
+            <img src="img/10xl.png" alt="скоро 10XL" class="front">
+            <img src="img/10xl.png" alt="скоро 10XL" class="back">
+            <p>скоро 10XL<br>(White)<br>K£125</p>
+        </div>
+        <div class="product">
+            <img src="img/skoro.png" alt="skoro" class="front">
+            <img src="img/skoro.png" alt="skoro" class="back">
+            <p>skoro<br>(anor!!!)<br>K£125</p>
+        </div>
+    </div>
+    
+    <h2>Каталог виниловых пластинок</h2>
+    <div class="vinyl-grid">
+        <div class="vinyl">
+            <img src="vinyl1.png" alt="Vinyl 1">
+            <p>Artist - Album Name<br>K£30</p>
+        </div>
+        <div class="vinyl">
+            <img src="vinyl2.png" alt="Vinyl 2">
+            <p>Artist - Album Name<br>K£35</p>
+        </div>
+        <div class="vinyl">
+            <img src="vinyl3.png" alt="Vinyl 3">
+            <p>Artist - Album Name<br>K£40</p>
+        </div>
+    </div>
+    
+    <div class="privacy-policy">
+        <h3>Политика конфиденциальности</h3>
+        <p>Мы собираем и обрабатываем персональные данные в соответствии с правилами сервера. Все данные используются только для улучшения качества обслуживания и не передаются огану с меломаном.</p>
+    </div>
+</body>
+</html>
 
