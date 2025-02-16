@@ -215,7 +215,7 @@
             background: darkred;
         }
 
-        .meme-button {
+        .exclamation-button {
             position: fixed;
             bottom: 20px;
             left: 20px;
@@ -231,9 +231,25 @@
             border: none;
             z-index: 1002;
         }
-        .meme-button:hover {
+        .exclamation-button:hover {
             background-color: #e0a800;
             transform: scale(1.1);
+        }
+
+        .modal-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: background-color 0.2s ease-in-out, transform 0.2s;
+        }
+        .modal-button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -294,8 +310,8 @@
     <!-- Кнопка информации -->
     <button class="info-button" onclick="openModal()">ℹ Информация</button>
 
-    <!-- Кнопка "Мем недели" -->
-    <button class="meme-button" onclick="openMemeModal()">Мем недели</button>
+    <!-- Кнопка "!!!" -->
+    <button class="exclamation-button" onclick="openExclamationModal()">!!!</button>
 
     <!-- Летающий самолет -->
     <div class="airplane" onclick="openAnorfaceModal()">
@@ -303,7 +319,7 @@
     </div>
 
     <!-- Затемнение -->
-    <div class="overlay" id="overlay" onclick="closeModal(); closeAnorfaceModal(); closeMemeModal()"></div>
+    <div class="overlay" id="overlay" onclick="closeModal(); closeAnorfaceModal(); closeExclamationModal()"></div>
 
     <!-- Модальное окно информации -->
     <div class="modal" id="infoModal">
@@ -315,16 +331,17 @@
     <!-- Модальное окно для anorface -->
     <div class="modal" id="anorfaceModal">
         <h2>Скачать anorface</h2>
-        <p>Текстурпак anorface для CosmicBedrock.</p>
+        <p>Текстурпак anorface заменят лица мобов на лицо анора.</p>
         <a href="packs/anorface.zip" class="download-button">Скачать anorface</a>
         <button class="close-button" onclick="closeAnorfaceModal()">Закрыть</button>
     </div>
 
-    <!-- Модальное окно для мема -->
-    <div class="modal" id="memeModal">
-        <h2>Мем недели</h2>
-        <img src="img/meme_of_the_week.mp4" alt="Мем недели" style="width: 100%; border-radius: 10px;">
-        <button class="close-button" onclick="closeMemeModal()">Закрыть</button>
+    <!-- Модальное окно для "!!!" -->
+    <div class="modal" id="exclamationModal">
+        <h2>Выберите действие</h2>
+        <button class="modal-button" onclick="alert('щащапацаны скоро будет')">щащапацаны скоро будет</button>
+        <a href="anormarket.html" class="modal-button">anormarket</a>
+        <button class="close-button" onclick="closeExclamationModal()">Закрыть</button>
     </div>
 
     <script>
@@ -348,13 +365,13 @@
             document.getElementById("overlay").classList.remove("show");
         }
 
-        function openMemeModal() {
-            document.getElementById("memeModal").classList.add("show");
+        function openExclamationModal() {
+            document.getElementById("exclamationModal").classList.add("show");
             document.getElementById("overlay").classList.add("show");
         }
 
-        function closeMemeModal() {
-            document.getElementById("memeModal").classList.remove("show");
+        function closeExclamationModal() {
+            document.getElementById("exclamationModal").classList.remove("show");
             document.getElementById("overlay").classList.remove("show");
         }
     </script>
