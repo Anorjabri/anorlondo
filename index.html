@@ -7,411 +7,134 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4; /* Цвет фона сайта */
+            text-align: center;
+            background-color: white;
             margin: 0;
             padding: 0;
         }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: white;
+        }
+        .header {
+            font-size: 36px;
+            font-weight: bold;
+            text-align: center;
+            flex-grow: 1; /* Это позволит заголовку занять все доступное пространство */
+        }
+        .top-menu {
+            display: flex;
+            gap: 10px;
+            align-items: center; /* Выравнивание по центру */
+        }
+        .top-menu a {
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            padding: 5px;
+        }
 
-        .hero {
+        .top-menu img {
+            width: 50px; /* Уменьшенные кнопки */
+            height: 50px;
+        }
+
+        .telegram-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .telegram-buttons img {
+            width: 50px; /* Уменьшенные кнопки */
+            height: 50px;
+        }
+        .container {
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100px; /* Высота шапки */
-            background-color: #f4f4f4; /* Цвет фона шапки такой же, как и фон сайта */
-            color: #333; /* Темный текст */
-            text-align: center;
-            position: relative;
-        }
-
-        .hero h1 {
-            font-size: 2rem;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+            gap: 40px;
+            flex-wrap: wrap;
             padding: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
         }
-
         .card {
-            background-color: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            max-width: 280px;
-            margin: 0 auto;
+            width: 250px;
             text-align: center;
-            padding-bottom: 15px;
         }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
         .card img {
             width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
+            height: auto;
         }
-
-        .card h2 {
-            font-size: 1.3rem;
-            margin: 10px 0;
-        }
-
-        .card p {
-            font-size: 1rem;
-            color: #555;
-            margin: 5px 10px 15px;
-        }
-
         .download-button {
-            display: inline-block;
-            background-color: #28a745;
-            color: #fff;
+            background-color: green;
+            color: white;
             padding: 10px 15px;
             text-decoration: none;
             border-radius: 5px;
-            font-size: 0.9rem;
-            transition: background-color 0.2s ease-in-out, transform 0.2s;
-            font-weight: bold;
-        }
-
-        .download-button:hover {
-            background-color: #218838;
-            transform: scale(1.05);
-        }
-
-        /* Кнопки Telegram */
-        .telegram-buttons {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            display: flex;
-            gap: 20px;
-        }
-
-        .telegram-button, .telegram-button-2, .telegram-button-3 {
-            background: transparent;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .telegram-button img, .telegram-button-2 img, .telegram-button-3 img {
-            width: 50px;
-            height: 50px;
-            transition: transform 0.3s ease;
-        }
-
-        .telegram-button:hover, .telegram-button-2:hover, .telegram-button-3:hover {
-            transform: scale(1.1);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .telegram-button-2 {
-            left: 80px;
-        }
-
-        .telegram-button-3 {
-            left: 140px;
-        }
-
-        .anorface-button {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background-color: #ff5722;
-            color: white;
-            padding: 12px 18px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-            border: none;
-        }
-
-        .anorface-button:hover {
-            background-color: #e64a19;
-            transform: scale(1.1);
-        }
-
-        .airplane {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100px;
-            height: 100px;
-            cursor: pointer;
-            animation: fly 20s linear infinite;
-            z-index: 1001;
-        }
-
-        .airplane img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        @keyframes fly {
-            0% { transform: translate(-100%, -100%) rotate(0deg); }
-            100% { transform: translate(100vw, 100vh) rotate(360deg); }
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
-            z-index: 999;
-        }
-
-        .modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.8);
-            background: white;
-            padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            z-index: 1000;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: transform 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
-        }
-
-        .modal.show {
-            transform: translate(-50%, -50%) scale(1);
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .close-button {
-            background: red;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            margin-top: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.2s ease-in-out;
-        }
-
-        .close-button:hover {
-            background: darkred;
-        }
-
-        .exclamation-button {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background-color: #ffc107;
-            color: black;
-            padding: 12px 18px;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.2s;
-            border: none;
-            z-index: 1002;
-        }
-
-        .exclamation-button:hover {
-            background-color: #e0a800;
-            transform: scale(1.1);
-        }
-
-        .modal-button {
             display: inline-block;
-            background-color: #007bff;
+            margin-top: 10px;
+        }
+        .footer {
+            background: black;
             color: white;
-            padding: 10px 20px;
-            margin: 10px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-size: 1rem;
-            transition: background-color 0.2s ease-in-out, transform 0.2s;
-        }
-
-        .modal-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
-
-        /* Дизайн кнопки "Информация" */
-        .info-button {
+            padding: 10px;
+            font-size: 12px;
             position: fixed;
-            bottom: 20px;
-            right: 20px; /* Размещаем кнопку справа */
-            padding: 12px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s, transform 0.2s;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
         }
-
-        .info-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.1);
-        }
-
-        /* Убираем обводку текста */
-        .modal h2, .modal p {
-            text-shadow: none; /* Убирает обводку текста */
-        }
-
     </style>
 </head>
 <body>
-
-    <div class="hero">
-        <h1>anorlondo!!!</h1>
-    </div>
-
-    <div class="telegram-buttons">
-        <a href="https://t.me/+wRSRv9SRegs2NWJi" target="_blank">
-            <button class="telegram-button">
+    <div class="header-container">
+        <div class="telegram-buttons">
+            <a href="https://t.me/+wRSRv9SRegs2NWJi" target="_blank">
                 <img src="img/tg_anorlondo.jpg" alt="Telegram">
-            </button>
-        </a>
-
-        <a href="https://t.me/+soq0CY-FBFxkNzBi" target="_blank">
-            <button class="telegram-button-2">
+            </a>
+            <a href="https://t.me/+soq0CY-FBFxkNzBi" target="_blank">
                 <img src="img/tg_capital.jpg" alt="Telegram">
-            </button>
-        </a>
-
-        <a href="https://t.me/+k52fhZ4pZfJjMjUy" target="_blank">
-            <button class="telegram-button-3">
+            </a>
+            <a href="https://t.me/+k52fhZ4pZfJjMjUy" target="_blank">
                 <img src="img/tg_antegria.jpg" alt="Telegram">
-            </button>
-        </a>
-    </div>
-
-    <div class="grid">
-        <div class="card">
-            <img src="img/texture1.jpg" alt="Текстурпак 1">
-            <div class="card-content">
-                <h2>anorlondo</h2>
-                <p>РП КШЛБ с декорациями одеждой и оружиями.</p>
-                <a href="packs/anorlondo.zip" class="download-button">Скачать</a>
-            </div>
+            </a>
         </div>
 
-        <div class="card">
-            <img src="img/texture2.jpg" alt="Текстурпак 2">
-            <div class="card-content">
-                <h2>CosmicPack</h2>
-                <p>Ресурспак сервера(DLC вместе).</p>
-                <a href="packs/cosmicpack.zip" class="download-button">Скачать</a>
-            </div>
-        </div>
+        <div class="header">............anorlondo!!!</div>
 
-        <div class="card">
-            <img src="img/texture3.jpg" alt="Текстурпак 3">
-            <div class="card-content">
-                <h2>Столица</h2>
-                <p>тимкей.</p>
-                <a href="packs/capital.zip" class="download-button">Скачать</a>
-            </div>
+        <div class="top-menu">
+            <a href="#">Information</a>
+            <a href="packs/anorface!!!.zip" target="_blank">
+                <img src="img/airplane.png">
+            </a>
+            <a href="https://soundcloud.com/anorjabri">Soundcloud</a>
         </div>
     </div>
 
-    <!-- Кнопка Информация -->
-    <button class="info-button" onclick="openModal()">ℹ Информация</button>
-
-    <button class="exclamation-button" onclick="openExclamationModal()">!!!</button>
-
-    <div class="airplane" onclick="openAnorfaceModal()">
-        <img src="img/airplane.png" alt="Самолет">
+    <div class="container">
+        <div class="card">
+            <img src="img/texture1.jpg" alt="anorlondo">
+            <h3>anorlondo</h3>
+            <p>РП КШЛБ с декорациями одеждой и оружиями.</p>
+            <a href="packs/anorlondo.zip" class="download-button">download!</a>
+        </div>
+        <div class="card">
+            <img src="img/texture2.jpg" alt="CosmicPack">
+            <h3>CosmicPack</h3>
+            <p>Ресурспак сервера (DLC вместе).</p>
+            <a href="packs/cosmicpack.zip" class="download-button">download!</a>
+        </div>
+        <div class="card">
+            <img src="img/texture3.jpg" alt="Столица">
+            <h3>Столица</h3>
+            <p>тимкей.</p>
+            <a href="#" class="download-button">download!</a>
+        </div>
     </div>
 
-    <div class="overlay" id="overlay" onclick="closeModal(); closeAnorfaceModal(); closeExclamationModal()"></div>
-
-    <div class="modal" id="infoModal">
-        <h2>О сайте</h2>
-        <p>Этот сайт сделан за 30 минут анором. tg:@anorjabri</p>
-        <button class="close-button" onclick="closeModal()">Закрыть</button>
+    <div class="footer">
+        ©anorlondo 2025 tg:anorjabri <br>
+        Мы собираем и обрабатываем персональные данные в соответствии с правилами сервера. Все данные используются только для улучшения качества обслуживания и не передаются огану с меломаном.
     </div>
-
-    <div class="modal" id="anorfaceModal">
-        <h2>Скачать anorface</h2>
-        <p>Текстурпак anorface заменят лица мобов на лицо анора.</p>
-        <a href="packs/anorface!!!.zip" class="download-button">Скачать anorface</a>
-        <button class="close-button" onclick="closeAnorfaceModal()">Закрыть</button>
-    </div>
-
-    <div class="modal" id="exclamationModal">
-        <h2>!!!</h2>
-        <p>Больше информации на сайте.</p>
-        <a href="anormarket.html" class="modal-button">Перейти на Anormarket</a>
-        <button class="close-button" onclick="closeExclamationModal()">Закрыть</button>
-    </div>
-
-    <script>
-        function openModal() {
-            document.getElementById("infoModal").classList.add("show");
-            document.getElementById("overlay").classList.add("show");
-        }
-
-        function closeModal() {
-            document.getElementById("infoModal").classList.remove("show");
-            document.getElementById("overlay").classList.remove("show");
-        }
-
-        function openAnorfaceModal() {
-            document.getElementById("anorfaceModal").classList.add("show");
-            document.getElementById("overlay").classList.add("show");
-        }
-
-        function closeAnorfaceModal() {
-            document.getElementById("anorfaceModal").classList.remove("show");
-            document.getElementById("overlay").classList.remove("show");
-        }
-
-        function openExclamationModal() {
-            document.getElementById("exclamationModal").classList.add("show");
-            document.getElementById("overlay").classList.add("show");
-        }
-
-        function closeExclamationModal() {
-            document.getElementById("exclamationModal").classList.remove("show");
-            document.getElementById("overlay").classList.remove("show");
-        }
-    </script>
-
 </body>
 </html>
