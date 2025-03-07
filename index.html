@@ -1,12 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>about</title>
+    <title>anorlondo</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            text-align: center;
             background-color: white;
             margin: 0;
             padding: 0;
@@ -22,12 +23,12 @@
             font-size: 36px;
             font-weight: bold;
             text-align: center;
-            flex-grow: 1;
+            flex-grow: 1; /* Это позволит заголовку занять все доступное пространство */
         }
         .top-menu {
             display: flex;
             gap: 10px;
-            align-items: center;
+            align-items: center; /* Выравнивание по центру */
         }
         .top-menu a {
             text-decoration: none;
@@ -35,33 +36,43 @@
             font-weight: bold;
             padding: 5px;
         }
+
         .top-menu img {
-            width: 50px;
+            width: 50px; /* Уменьшенные кнопки */
             height: 50px;
         }
+
         .telegram-buttons {
             display: flex;
             gap: 5px;
         }
         .telegram-buttons img {
-            width: 50px;
+            width: 50px; /* Уменьшенные кнопки */
             height: 50px;
         }
-        .content {
-            max-width: 800px;
-            margin: 50px auto;
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
             padding: 20px;
         }
-        .about-title {
-            font-size: 24px;
-            font-weight: bold;
-            text-align: left;
-            margin-bottom: 10px;
+        .card {
+            width: 250px;
+            text-align: center;
         }
-        .about-text {
-            font-size: 14px;
-            line-height: 1.6;
-            text-align: justify;
+        .card img {
+            width: 100%;
+            height: auto;
+        }
+        .download-button {
+            background-color: green;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
         }
         .footer {
             background: black;
@@ -88,32 +99,37 @@
                 <img src="img/tg_antegria.jpg" alt="Telegram">
             </a>
         </div>
+
         <div class="header">............anorlondo!!!</div>
+
         <div class="top-menu">
-            <a href="index.html">Main</a>
+            <a href="information.html">Information</a>
             <a href="packs/anorface!!!.zip" target="_blank">
                 <img src="img/airplane.png">
             </a>
             <a href="https://soundcloud.com/anorjabri">Soundcloud</a>
         </div>
     </div>
-    <div class="content">
-        <div class="about-title">About</div>
-        <div class="about-text">
-            <p>Что такое IndastrialCraft Bank?</p>
-            <p>Часто задаваемый вопрос: «Что такое IndastrialCraft Bank?».</p>
-            <p>Вкратце, IndastrialCraft Bank – это не просто банк, это новый уровень финансовой экосистемы на кб. Основанный в КШЛБ, LSD как валюта стал ключевой точкой пересечения финансов, технологий и современного бизнеса на КБ. Мы работаем как с регионами, так и с частными клиентами, предлагая передовые банковские решения, интегрированные с последними трендами в сфере финансовых технологий.</p>
-            <p>– удобные банковские решения для частных клиентов: кредиты, депозиты, инвестиции и управление капиталом.</p>
-            <p>– премиальное банковское обслуживание с индивидуальным подходом, эксклюзивными финансовыми инструментами и инвестициями мирового уровня.</p>
-            <p>– удобный телеграм-банкинг бот – финансы под контролем.</p>
-            <p>Выходя за рамки традиционного банкинга, ICB! объединяет лучшие финансовые сервисы с инновационной онлайн-платформой. В то же время, наш регион становится местом встреч лидеров рынка, инвесторов и предпринимателей, помогая создавать новые финансовые возможности.</p>
-            <p>IndastrialCraft Bank – банк будущего, доступный уже сегодня!!!</p>
-        </div>
 
-        <!-- Кнопка в виде текстовой ссылки -->
-        <p style="text-align: center; margin-left: 20px;">
-            <a href="https://t.me/BANKOFINDASTRIALCRAFT_bot" target="_blank">Открыть Telegram-бот</a>
-        </p>
+    <div class="container">
+        <div class="card">
+            <img src="img/texture1.jpg" alt="anorlondo">
+            <h3>anorlondo</h3>
+            <p>РП КШЛБ с декорациями одеждой и оружиями.</p>
+            <a href="packs/anorlondo.zip" class="download-button">download!</a>
+        </div>
+        <div class="card">
+            <img src="img/texture2.jpg" alt="CosmicPack">
+            <h3>CosmicPack</h3>
+            <p>Ресурспак сервера (DLC вместе).</p>
+            <a href="packs/cosmicpack.zip" class="download-button">download!</a>
+        </div>
+        <div class="card">
+            <img src="img/texture3.jpg" alt="Столица">
+            <h3>Столица</h3>
+            <p>тимкей.</p>
+            <a href="#" class="download-button">download!</a>
+        </div>
     </div>
 
     <div class="footer">
