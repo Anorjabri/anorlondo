@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About</title>
+    <title>about</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,48 +17,43 @@
             align-items: center;
             padding: 10px 20px;
             background: white;
-            flex-wrap: wrap; /* Добавлено для мобильной версии */
         }
         .header {
-            font-size: 24px; /* Уменьшен размер шрифта для мобильных */
+            font-size: 36px;
             font-weight: bold;
             text-align: center;
             flex-grow: 1;
-            margin: 10px 0; /* Добавлено для мобильной версии */
         }
         .top-menu {
             display: flex;
             gap: 10px;
             align-items: center;
-            flex-wrap: wrap; /* Добавлено для мобильной версии */
         }
         .top-menu a {
             text-decoration: none;
             color: black;
             font-weight: bold;
             padding: 5px;
-            font-size: 14px; /* Уменьшен размер шрифта для мобильных */
         }
         .top-menu img {
-            width: 40px; /* Уменьшен размер иконки для мобильных */
-            height: 40px;
+            width: 50px;
+            height: 50px;
         }
         .telegram-buttons {
             display: flex;
             gap: 5px;
-            flex-wrap: wrap; /* Добавлено для мобильной версии */
         }
         .telegram-buttons img {
-            width: 40px; /* Уменьшен размер иконки для мобильных */
-            height: 40px;
+            width: 50px;
+            height: 50px;
         }
         .content {
             max-width: 800px;
-            margin: 20px auto; /* Уменьшен отступ для мобильных */
-            padding: 10px; /* Уменьшен отступ для мобильных */
+            margin: 50px auto;
+            padding: 20px;
         }
         .about-title {
-            font-size: 20px; /* Уменьшен размер шрифта для мобильных */
+            font-size: 24px;
             font-weight: bold;
             text-align: left;
             margin-bottom: 10px;
@@ -77,36 +72,6 @@
             bottom: 0;
             width: 100%;
             text-align: center;
-        }
-
-        /* Медиа-запросы для мобильных устройств */
-        @media (max-width: 600px) {
-            .header-container {
-                flex-direction: column; /* Элементы в столбец на мобильных */
-                align-items: center;
-            }
-            .header {
-                font-size: 20px; /* Еще меньше шрифт для мобильных */
-            }
-            .top-menu {
-                justify-content: center; /* Центрирование меню на мобильных */
-            }
-            .telegram-buttons {
-                justify-content: center; /* Центрирование кнопок на мобильных */
-            }
-            .content {
-                margin: 10px auto; /* Еще меньше отступов для мобильных */
-                padding: 5px;
-            }
-            .about-title {
-                font-size: 18px; /* Уменьшен размер заголовка для мобильных */
-            }
-            .about-text {
-                font-size: 12px; /* Уменьшен размер текста для мобильных */
-            }
-            .footer {
-                font-size: 10px; /* Уменьшен размер текста в футере для мобильных */
-            }
         }
     </style>
 </head>
