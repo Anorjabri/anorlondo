@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>iPod Classic Web Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+        
+        .ipod-container {
+            position: relative;
+            width: 300px;
+            height: 500px;
+            background: #e0e0e0;
+            border-radius: 30px;
+            box-shadow: 
+                0 0 0 8px #333,
+                0 10px 25px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            padding: 20px;
+        }
+        
+        .screen {
+            background: linear-gradient(135deg, #acb6e5, #86fde8);
+            width: 100%;
+            height: 220px;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .screen-header {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 5px 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .menu-items {
+            list-style: none;
+            padding: 10px 0;
+        }
+        
+        .menu-item {
+            padding: 8px 15px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+        
+        .menu-item.active {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+        
+        .menu-item .icon {
+            color: #555;
+        }
+        
+        .now-playing {
+            display: none;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .album-art {
+            width: 120px;
+            height: 120px;
+            background: #555;
+            margin: 0 auto 15px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .album-art img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .song-info {
+            margin-bottom: 15px;
+        }
+        
+        .song-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        
+        .song-artist {
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 3px;
+            background: rgba(0, 0, 0, 0.2);
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            width: 30%;
+            background: #333;
+            border-radius: 3px;
+        }
+        
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #555;
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .control-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .click-wheel {
+            width: 200px;
+            height: 200px;
+            background: #333;
+            border-radius: 50%;
+            margin: 20px auto 0;
+            position: relative;
+            box-shadow: 
+                inset 0 0 20px rgba(0, 0, 0, 0.5),
+                0 5px 10px rgba(0, 0, 0, 0.3);
+            touch-action: none;
+        }
+        
+        .wheel-center {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #444;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 12px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .wheel-btn {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .menu-btn {
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .next-btn {
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+        }
+        
+        .play-btn {
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .prev-btn {
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+        }
+        
+        .hold-switch {
+            position: absolute;
+            top: 30px;
+            right: -5px;
+            width: 20px;
+            height: 50px;
+            background: #333;
+            border-radius: 3px;
+        }
+        
+        .hold-switch::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 10px;
+            height: 20px;
+            background: #666;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ipod-container">
+        <div class="hold-switch"></div>
+        
+        <div class="screen">
+            <div class="screen-header">
+                <span>iPod</span>
+                <span>3:45 PM</span>
+            </div>
+            
+            <div class="menu-view">
+                <ul class="menu-items">
+                    <li class="menu-item active">
+                        <span>Music</span>
+                        <span class="icon">></span>
+                    </li>
+                    <li class="menu-item">
+                        <span>Photos</span>
+                        <span class="icon">></span>
+                    </li>
+                    <li class="menu-item">
+                        <span>Videos</span>
+                        <span class="icon">></span>
+                    </li>
+                    <li class="menu-item">
+                        <span>Podcasts</span>
+                        <span class="icon">></span>
+                    </li>
+                    <li class="menu-item">
+                        <span>Extras</span>
+                        <span class="icon">></span>
+                    </li>
+                    <li class="menu-item">
+                        <span>Settings</span>
+                        <span class="icon">></span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="now-playing">
+                <div class="album-art">
+                    <img src="https://via.placeholder.com/120" alt="Album Art">
+                </div>
+                <div class="song-info">
+                    <div class="song-title">Song Title</div>
+                    <div class="song-artist">Artist Name</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+                <div class="time-display">
+                    <span>1:23</span>
+                    <span>3:45</span>
+                </div>
+                <div class="controls">
+                    <div class="control-btn">◀◀</div>
+                    <div class="control-btn">▶</div>
+                    <div class="control-btn">▶▶</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="click-wheel" id="clickWheel">
+            <button class="wheel-btn menu-btn">MENU</button>
+            <button class="wheel-btn next-btn">▶▶</button>
+            <button class="wheel-btn play-btn">▶❚❚</button>
+            <button class="wheel-btn prev-btn">◀◀</button>
+            <div class="wheel-center">SELECT</div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const clickWheel = document.getElementById('clickWheel');
+        const menuItems = document.querySelectorAll('.menu-item');
+        const menuView = document.querySelector('.menu-view');
+        const nowPlayingView = document.querySelector('.now-playing');
+        const playBtn = document.querySelector('.play-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        const prevBtn = document.querySelector('.prev-btn');
+        const menuBtn = document.querySelector('.menu-btn');
+        const wheelCenter = document.querySelector('.wheel-center');
+        const progressBar = document.querySelector('.progress-bar');
+        
+        // State
+        let currentMenuItem = 0;
+        let isPlaying = false;
+        let currentTime = 83; // in seconds
+        let totalTime = 225; // in seconds
+        let progressInterval;
+        
+        // Format time (seconds to MM:SS)
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
+        // Update progress bar
+        function updateProgress() {
+            const progress = (currentTime / totalTime) * 100;
+            progressBar.style.width = `${progress}%`;
+            document.querySelector('.time-display span:first-child').textContent = formatTime(currentTime);
+            
+            if (currentTime >= totalTime) {
+                clearInterval(progressInterval);
+                isPlaying = false;
+                playBtn.textContent = '▶';
+            } else {
+                currentTime++;
+            }
+        }
+        
+        // Handle menu navigation
+        function updateMenuSelection() {
+            menuItems.forEach((item, index) => {
+                item.classList.toggle('active', index === currentMenuItem);
+            });
+        }
+        
+        // Wheel rotation handling
+        let startAngle = 0;
+        let currentAngle = 0;
+        
+        function getAngle(event) {
+            const rect = clickWheel.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const x = event.clientX - centerX;
+            const y = event.clientY - centerY;
+            return Math.atan2(y, x) * 180 / Math.PI;
+        }
+        
+        clickWheel.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            startAngle = getAngle(e.touches[0]);
+        });
+        
+        clickWheel.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const angle = getAngle(e.touches[0]);
+            const delta = angle - startAngle;
+            
+            // Normalize delta to -180 to 180 range
+            let normalizedDelta = delta;
+            if (normalizedDelta > 180) normalizedDelta -= 360;
+            if (normalizedDelta < -180) normalizedDelta += 360;
+            
+            // Only register significant rotations to prevent jitter
+            if (Math.abs(normalizedDelta) > 15) {
+                if (normalizedDelta > 0) {
+                    // Rotated clockwise (down in iPod terms)
+                    currentMenuItem = Math.min(currentMenuItem + 1, menuItems.length - 1);
+                } else {
+                    // Rotated counter-clockwise (up in iPod terms)
+                    currentMenuItem = Math.max(currentMenuItem - 1, 0);
+                }
+                updateMenuSelection();
+                startAngle = angle;
+            }
+        });
+        
+        // Button click handlers
+        wheelCenter.addEventListener('click', () => {
+            if (menuView.style.display !== 'none') {
+                if (currentMenuItem === 0) {
+                    // Music selected - show now playing
+                    menuView.style.display = 'none';
+                    nowPlayingView.style.display = 'block';
+                }
+            }
+        });
+        
+        menuBtn.addEventListener('click', () => {
+            if (nowPlayingView.style.display === 'block') {
+                nowPlayingView.style.display = 'none';
+                menuView.style.display = 'block';
+            }
+        });
+        
+        playBtn.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playBtn.textContent = isPlaying ? '❚❚' : '▶';
+            
+            if (isPlaying) {
+                progressInterval = setInterval(updateProgress, 1000);
+            } else {
+                clearInterval(progressInterval);
+            }
+        });
+        
+        nextBtn.addEventListener('click', () => {
+            // Simulate next track
+            currentTime = 0;
+            totalTime = 180 + Math.floor(Math.random() * 120);
+            document.querySelector('.song-title').textContent = 'New Song ' + (Math.floor(Math.random() * 10) + 1);
+            document.querySelector('.song-artist').textContent = 'Artist ' + (Math.floor(Math.random() * 5) + 1);
+            document.querySelector('.time-display span:last-child').textContent = formatTime(totalTime);
+            
+            if (isPlaying) {
+                clearInterval(progressInterval);
+                progressInterval = setInterval(updateProgress, 1000);
+            }
+        });
+        
+        prevBtn.addEventListener('click', () => {
+            // Simulate previous track
+            currentTime = 0;
+            totalTime = 180 + Math.floor(Math.random() * 120);
+            document.querySelector('.song-title').textContent = 'Previous Song ' + (Math.floor(Math.random() * 10) + 1);
+            document.querySelector('.song-artist').textContent = 'Artist ' + (Math.floor(Math.random() * 5) + 1);
+            document.querySelector('.time-display span:last-child').textContent = formatTime(totalTime);
+            
+            if (isPlaying) {
+                clearInterval(progressInterval);
+                progressInterval = setInterval(updateProgress, 1000);
+            }
+        });
+        
+        // Initialize
+        updateMenuSelection();
+        document.querySelector('.time-display span:last-child').textContent = formatTime(totalTime);
+    </script>
+</body>
+</html>
