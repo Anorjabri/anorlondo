@@ -1,780 +1,294 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPod Classic with Album Selection</title>
+    <title>Mobile Pong</title>
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
-        
-        body {
-            background: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            touch-action: manipulation;
-        }
-        
-        .ipod-container {
-            position: relative;
-            width: 300px;
-            height: 500px;
-            background: #e0e0e0;
-            border-radius: 30px;
-            box-shadow: 
-                0 0 0 8px #333,
-                0 10px 25px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            padding: 20px;
+            touch-action: none;
+            background-color: #000;
+            font-family: Arial, sans-serif;
         }
         
-        .screen {
-            background: linear-gradient(135deg, #acb6e5, #86fde8);
-            width: 100%;
-            height: 220px;
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .screen-header {
-            background: rgba(0, 0, 0, 0.1);
-            padding: 5px 10px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .menu-items {
-            list-style: none;
-            padding: 10px 0;
-            overflow-y: auto;
-            height: 180px;
-        }
-        
-        .menu-item {
-            padding: 8px 15px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .menu-item.active {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 3px;
-        }
-        
-        .menu-item .icon {
-            color: #555;
-        }
-        
-        .now-playing {
-            display: none;
-            padding: 20px;
-            text-align: center;
-            height: 180px;
-            overflow: hidden;
-        }
-        
-        .album-view {
-            display: none;
-            padding: 10px;
-            text-align: center;
-            height: 180px;
-            overflow: hidden;
-        }
-        
-        .album-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            padding: 10px;
-            overflow-y: auto;
-            height: 160px;
-        }
-        
-        .album-cover {
-            width: 100%;
-            aspect-ratio: 1;
-            background: #555;
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-        }
-        
-        .album-cover img {
+        #gameContainer {
+            position: fixed;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            background-color: #000;
         }
         
-        .album-cover.active {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            z-index: 1;
+        #paddlePlayer, #paddleAI {
+            position: absolute;
+            width: 15px;
+            height: 80px;
+            background-color: #fff;
+            border-radius: 5px;
         }
         
-        .album-cover::after {
-            content: '';
+        #paddlePlayer {
+            left: 10px;
+        }
+        
+        #paddleAI {
+            right: 10px;
+        }
+        
+        #ball {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: #fff;
+            border-radius: 50%;
+        }
+        
+        #score {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            font-size: 24px;
+        }
+        
+        #startScreen {
             position: absolute;
             top: 0;
             left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .album-cover.active::after {
-            opacity: 1;
-        }
-        
-        .album-title {
-            font-size: 10px;
-            margin-top: 5px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .album-art {
-            width: 120px;
-            height: 120px;
-            background: #555;
-            margin: 0 auto 15px;
-            border-radius: 3px;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .album-art img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-        }
-        
-        .song-info {
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        .song-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 3px;
-        }
-        
-        .song-artist {
-            font-size: 14px;
-            color: #555;
-        }
-        
-        .progress-container {
-            width: 100%;
-            height: 3px;
-            background: rgba(0, 0, 0, 0.2);
-            margin: 10px 0;
-            border-radius: 3px;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            width: 30%;
-            background: #333;
-            border-radius: 3px;
-            transition: width 0.5s linear;
-        }
-        
-        .time-display {
+            background-color: rgba(0, 0, 0, 0.8);
             display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #555;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+        
+        #startButton {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
         
         .controls {
             position: absolute;
-            bottom: 15px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .control-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: #666;
             font-size: 14px;
-            font-weight: bold;
-        }
-        
-        .click-wheel {
-            width: 200px;
-            height: 200px;
-            background: #333;
-            border-radius: 50%;
-            margin: 20px auto 0;
-            position: relative;
-            box-shadow: 
-                inset 0 0 20px rgba(0, 0, 0, 0.5),
-                0 5px 10px rgba(0, 0, 0, 0.3);
-            touch-action: none;
-        }
-        
-        .wheel-center {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: #444;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 12px;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        
-        .wheel-btn {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .menu-btn {
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .next-btn {
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-        }
-        
-        .play-btn {
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .prev-btn {
-            top: 50%;
-            left: 15px;
-            transform: translateY(-50%);
-        }
-        
-        .hold-switch {
-            position: absolute;
-            top: 30px;
-            right: -5px;
-            width: 20px;
-            height: 50px;
-            background: #333;
-            border-radius: 3px;
-        }
-        
-        .hold-switch::after {
-            content: '';
-            position: absolute;
-            top: 5px;
-            left: 5px;
-            width: 10px;
-            height: 20px;
-            background: #666;
-            border-radius: 2px;
-        }
-        
-        .file-input {
-            display: none;
-        }
-        
-        .upload-btn {
-            position: absolute;
-            bottom: 240px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.2);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            z-index: 10;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .album-cover.loading {
-            animation: pulse 1.5s infinite;
-        }
-        
-        .album-art.playing {
-            animation: pulse 2s infinite;
         }
     </style>
 </head>
 <body>
-    <div class="ipod-container">
-        <div class="hold-switch"></div>
-        
-        <div class="screen">
-            <div class="screen-header">
-                <span>iPod</span>
-                <span id="time-display">3:45 PM</span>
+    <div id="gameContainer">
+        <div id="paddlePlayer"></div>
+        <div id="paddleAI"></div>
+        <div id="ball"></div>
+        <div id="score">0 : 0</div>
+        <div id="startScreen">
+            <h1>Mobile Pong</h1>
+            <p>Касайтесь экрана, чтобы двигать ракетку</p>
+            <p>Правая ракетка управляется автоматически</p>
+            <button id="startButton">Начать игру</button>
+            <div class="controls">
+                (Для паузы коснитесь двумя пальцами)
             </div>
-            
-            <div class="menu-view">
-                <ul class="menu-items">
-                    <li class="menu-item active" data-view="music">
-                        <span>Music</span>
-                        <span class="icon">></span>
-                    </li>
-                    <li class="menu-item" data-view="albums">
-                        <span>Albums</span>
-                        <span class="icon">></span>
-                    </li>
-                    <li class="menu-item" data-view="artists">
-                        <span>Artists</span>
-                        <span class="icon">></span>
-                    </li>
-                    <li class="menu-item" data-view="playlists">
-                        <span>Playlists</span>
-                        <span class="icon">></span>
-                    </li>
-                    <li class="menu-item" data-view="settings">
-                        <span>Settings</span>
-                        <span class="icon">></span>
-                    </li>
-                </ul>
-            </div>
-            
-            <div class="now-playing">
-                <div class="album-art">
-                    <img id="now-playing-art" src="https://via.placeholder.com/120" alt="Album Art">
-                </div>
-                <div class="song-info">
-                    <div class="song-title" id="now-playing-title">Song Title</div>
-                    <div class="song-artist" id="now-playing-artist">Artist Name</div>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar"></div>
-                </div>
-                <div class="time-display">
-                    <span id="current-time">1:23</span>
-                    <span id="total-time">3:45</span>
-                </div>
-                <div class="controls">
-                    <div class="control-btn">◀◀</div>
-                    <div class="control-btn">▶</div>
-                    <div class="control-btn">▶▶</div>
-                </div>
-            </div>
-            
-            <div class="album-view">
-                <div class="album-grid" id="album-grid">
-                    <!-- Albums will be added here dynamically -->
-                </div>
-            </div>
-        </div>
-        
-        <button class="upload-btn" id="uploadBtn">Add Albums</button>
-        <input type="file" class="file-input" id="albumInput" accept="image/*" multiple>
-        
-        <div class="click-wheel" id="clickWheel">
-            <button class="wheel-btn menu-btn">MENU</button>
-            <button class="wheel-btn next-btn">▶▶</button>
-            <button class="wheel-btn play-btn">▶❚❚</button>
-            <button class="wheel-btn prev-btn">◀◀</button>
-            <div class="wheel-center">SELECT</div>
         </div>
     </div>
 
     <script>
-        // DOM Elements
-        const clickWheel = document.getElementById('clickWheel');
-        const menuItems = document.querySelectorAll('.menu-item');
-        const menuView = document.querySelector('.menu-view');
-        const nowPlayingView = document.querySelector('.now-playing');
-        const albumView = document.querySelector('.album-view');
-        const albumGrid = document.getElementById('album-grid');
-        const playBtn = document.querySelector('.play-btn');
-        const nextBtn = document.querySelector('.next-btn');
-        const prevBtn = document.querySelector('.prev-btn');
-        const menuBtn = document.querySelector('.menu-btn');
-        const wheelCenter = document.querySelector('.wheel-center');
-        const progressBar = document.querySelector('.progress-bar');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const albumInput = document.getElementById('albumInput');
-        const nowPlayingArt = document.getElementById('now-playing-art');
-        const nowPlayingTitle = document.getElementById('now-playing-title');
-        const nowPlayingArtist = document.getElementById('now-playing-artist');
-        const currentTimeDisplay = document.getElementById('current-time');
-        const totalTimeDisplay = document.getElementById('total-time');
-        const timeDisplay = document.getElementById('time-display');
+        // Элементы игры
+        const gameContainer = document.getElementById('gameContainer');
+        const paddlePlayer = document.getElementById('paddlePlayer');
+        const paddleAI = document.getElementById('paddleAI');
+        const ball = document.getElementById('ball');
+        const scoreElement = document.getElementById('score');
+        const startScreen = document.getElementById('startScreen');
+        const startButton = document.getElementById('startButton');
         
-        // State
-        let currentMenuItem = 0;
-        let currentAlbumIndex = 0;
-        let isPlaying = false;
-        let currentTime = 83;
-        let totalTime = 225;
-        let progressInterval;
-        let albums = [];
-        let currentView = 'menu';
+        // Размеры игрового поля
+        let gameWidth = window.innerWidth;
+        let gameHeight = window.innerHeight;
         
-        // Sample album data (will be replaced with uploaded albums)
-        const sampleAlbums = [
-            { title: "Classic Hits", artist: "Various Artists", cover: "https://via.placeholder.com/150/86fde8/333333?text=Classic+Hits" },
-            { title: "Summer Vibes", artist: "Beach Band", cover: "https://via.placeholder.com/150/acb6e5/333333?text=Summer+Vibes" },
-            { title: "Jazz Night", artist: "Smooth Players", cover: "https://via.placeholder.com/150/e0acb6/333333?text=Jazz+Night" },
-            { title: "Rock Anthems", artist: "Guitar Heroes", cover: "https://via.placeholder.com/150/b6e0ac/333333?text=Rock+Anthems" }
-        ];
+        // Позиции и скорости
+        let paddlePlayerPos = gameHeight / 2 - 40;
+        let paddleAIPos = gameHeight / 2 - 40;
+        let ballX = gameWidth / 2;
+        let ballY = gameHeight / 2;
+        let ballSpeedX = 4;
+        let ballSpeedY = 4;
         
-        // Initialize with sample albums
-        albums = [...sampleAlbums];
-        renderAlbums();
+        // Счет
+        let playerScore = 0;
+        let aiScore = 0;
         
-        // Update time display
-        function updateClock() {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            const displayHours = hours % 12 || 12;
-            timeDisplay.textContent = `${displayHours}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
-        }
+        // Состояние игры
+        let gameRunning = false;
+        let gamePaused = false;
         
-        // Update clock immediately and then every minute
-        updateClock();
-        setInterval(updateClock, 60000);
+        // Обработчик изменения размера окна
+        window.addEventListener('resize', () => {
+            gameWidth = window.innerWidth;
+            gameHeight = window.innerHeight;
+        });
         
-        // Format time (seconds to MM:SS)
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        }
-        
-        // Update progress bar
-        function updateProgress() {
-            const progress = (currentTime / totalTime) * 100;
-            progressBar.style.width = `${progress}%`;
-            currentTimeDisplay.textContent = formatTime(currentTime);
+        // Инициализация игры
+        function initGame() {
+            // Установка начальных позиций
+            paddlePlayer.style.top = paddlePlayerPos + 'px';
+            paddlePlayer.style.left = '10px';
             
-            if (currentTime >= totalTime) {
-                clearInterval(progressInterval);
-                isPlaying = false;
-                playBtn.textContent = '▶';
-                document.querySelector('.album-art').classList.remove('playing');
-            } else {
-                currentTime++;
+            paddleAI.style.top = paddleAIPos + 'px';
+            paddleAI.style.right = '10px';
+            
+            ball.style.top = ballY + 'px';
+            ball.style.left = ballX + 'px';
+            
+            // Скрываем стартовый экран
+            startScreen.style.display = 'none';
+            
+            // Сброс счета
+            playerScore = 0;
+            aiScore = 0;
+            updateScore();
+            
+            // Запускаем игровой цикл
+            gameRunning = true;
+            gamePaused = false;
+            gameLoop();
+        }
+        
+        // Игровой цикл
+        function gameLoop() {
+            if (!gamePaused) {
+                update();
+                render();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Обновление состояния игры
+        function update() {
+            // Движение ракетки игрока (управляется касанием)
+            
+            // Движение ракетки AI (следит за мячом с небольшой задержкой)
+            const aiPaddleCenter = paddleAIPos + 40;
+            if (aiPaddleCenter < ballY - 15) {
+                paddleAIPos += 3;
+            } else if (aiPaddleCenter > ballY + 15) {
+                paddleAIPos -= 3;
+            }
+            
+            // Ограничение движения AI ракетки
+            if (paddleAIPos < 0) paddleAIPos = 0;
+            if (paddleAIPos > gameHeight - 80) paddleAIPos = gameHeight - 80;
+            
+            // Движение мяча
+            ballX += ballSpeedX;
+            ballY += ballSpeedY;
+            
+            // Отскок от верхней и нижней границ
+            if (ballY <= 0 || ballY >= gameHeight - 15) {
+                ballSpeedY = -ballSpeedY;
+            }
+            
+            // Отскок от левой ракетки (игрока)
+            if (ballX <= 25 && ballX >= 10 && ballY + 15 >= paddlePlayerPos && ballY <= paddlePlayerPos + 80) {
+                ballSpeedX = -ballSpeedX;
+                // Добавляем немного случайности
+                ballSpeedY += (Math.random() - 0.5) * 2;
+            }
+            
+            // Отскок от правой ракетки (AI)
+            if (ballX >= gameWidth - 25 && ballX <= gameWidth - 10 && ballY + 15 >= paddleAIPos && ballY <= paddleAIPos + 80) {
+                ballSpeedX = -ballSpeedX;
+                // Добавляем немного случайности
+                ballSpeedY += (Math.random() - 0.5) * 2;
+            }
+            
+            // Гол за AI (мяч вышел за левую границу)
+            if (ballX < 0) {
+                aiScore++;
+                updateScore();
+                resetBall();
+            }
+            
+            // Гол за игрока (мяч вышел за правую границу)
+            if (ballX > gameWidth) {
+                playerScore++;
+                updateScore();
+                resetBall();
             }
         }
         
-        // Handle menu navigation
-        function updateMenuSelection() {
-            menuItems.forEach((item, index) => {
-                item.classList.toggle('active', index === currentMenuItem);
-            });
+        // Отрисовка игры
+        function render() {
+            paddlePlayer.style.top = paddlePlayerPos + 'px';
+            paddleAI.style.top = paddleAIPos + 'px';
+            ball.style.top = ballY + 'px';
+            ball.style.left = ballX + 'px';
         }
         
-        // Render albums to the grid
-        function renderAlbums() {
-            albumGrid.innerHTML = '';
-            albums.forEach((album, index) => {
-                const albumElement = document.createElement('div');
-                albumElement.className = 'album-cover';
-                albumElement.dataset.index = index;
-                albumElement.innerHTML = `
-                    <img src="${album.cover}" alt="${album.title}">
-                    <div class="album-title">${album.title}</div>
-                `;
-                albumGrid.appendChild(albumElement);
-                
-                // Add animation when album is added
-                setTimeout(() => {
-                    albumElement.style.animation = 'fadeIn 0.5s ease-out';
-                }, (index % 4) * 100);
-            });
+        // Обновление счета
+        function updateScore() {
+            scoreElement.textContent = `${playerScore} : ${aiScore}`;
         }
         
-        // Play selected album
-        function playAlbum(index) {
-            const album = albums[index];
+        // Сброс мяча после гола
+        function resetBall() {
+            ballX = gameWidth / 2;
+            ballY = gameHeight / 2;
+            ballSpeedX = 4 * (Math.random() > 0.5 ? 1 : -1);
+            ballSpeedY = 4 * (Math.random() * 2 - 1);
+        }
+        
+        // Обработчики событий касания
+        let touchY = 0;
+        
+        gameContainer.addEventListener('touchstart', (e) => {
+            if (!gameRunning) return;
             
-            // Highlight selected album
-            document.querySelectorAll('.album-cover').forEach(cover => {
-                cover.classList.remove('active');
-            });
-            document.querySelector(`.album-cover[data-index="${index}"]`).classList.add('active');
-            
-            // Animate album art transition
-            const albumArt = document.querySelector('.album-art');
-            albumArt.style.transform = 'scale(0.8)';
-            albumArt.style.opacity = '0';
-            
-            setTimeout(() => {
-                nowPlayingArt.src = album.cover;
-                nowPlayingTitle.textContent = album.title;
-                nowPlayingArtist.textContent = album.artist;
-                
-                // Generate random song and duration for demo
-                const songNum = Math.floor(Math.random() * 12) + 1;
-                nowPlayingTitle.textContent = `Song ${songNum}`;
-                totalTime = 180 + Math.floor(Math.random() * 120);
-                currentTime = 0;
-                totalTimeDisplay.textContent = formatTime(totalTime);
-                currentTimeDisplay.textContent = formatTime(currentTime);
-                progressBar.style.width = '0%';
-                
-                albumArt.style.transform = 'scale(1)';
-                albumArt.style.opacity = '1';
-                
-                // Switch to now playing view
-                menuView.style.display = 'none';
-                albumView.style.display = 'none';
-                nowPlayingView.style.display = 'block';
-                currentView = 'nowPlaying';
-                
-                // Start playing if not already
-                if (!isPlaying) {
-                    isPlaying = true;
-                    playBtn.textContent = '❚❚';
-                    albumArt.classList.add('playing');
-                    progressInterval = setInterval(updateProgress, 1000);
-                }
-            }, 300);
-        }
-        
-        // Wheel rotation handling
-        let startAngle = 0;
-        let currentAngle = 0;
-        
-        function getAngle(event) {
-            const rect = clickWheel.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const x = event.clientX - centerX;
-            const y = event.clientY - centerY;
-            return Math.atan2(y, x) * 180 / Math.PI;
-        }
-        
-        clickWheel.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            startAngle = getAngle(e.touches[0]);
+            
+            // Пауза при касании двумя пальцами
+            if (e.touches.length >= 2) {
+                gamePaused = !gamePaused;
+                return;
+            }
+            
+            touchY = e.touches[0].clientY;
         });
         
-        clickWheel.addEventListener('touchmove', (e) => {
+        gameContainer.addEventListener('touchmove', (e) => {
+            if (!gameRunning || gamePaused) return;
+            
             e.preventDefault();
-            const angle = getAngle(e.touches[0]);
-            const delta = angle - startAngle;
             
-            // Normalize delta to -180 to 180 range
-            let normalizedDelta = delta;
-            if (normalizedDelta > 180) normalizedDelta -= 360;
-            if (normalizedDelta < -180) normalizedDelta += 360;
+            const newTouchY = e.touches[0].clientY;
+            const deltaY = newTouchY - touchY;
             
-            // Only register significant rotations to prevent jitter
-            if (Math.abs(normalizedDelta) > 15) {
-                if (currentView === 'menu') {
-                    if (normalizedDelta > 0) {
-                        // Rotated clockwise (down in iPod terms)
-                        currentMenuItem = Math.min(currentMenuItem + 1, menuItems.length - 1);
-                    } else {
-                        // Rotated counter-clockwise (up in iPod terms)
-                        currentMenuItem = Math.max(currentMenuItem - 1, 0);
-                    }
-                    updateMenuSelection();
-                } else if (currentView === 'albums') {
-                    const albumCovers = document.querySelectorAll('.album-cover');
-                    if (normalizedDelta > 0) {
-                        // Rotated clockwise (down)
-                        currentAlbumIndex = Math.min(currentAlbumIndex + 1, albums.length - 1);
-                    } else {
-                        // Rotated counter-clockwise (up)
-                        currentAlbumIndex = Math.max(currentAlbumIndex - 1, 0);
-                    }
-                    
-                    // Scroll album into view
-                    if (albumCovers[currentAlbumIndex]) {
-                        albumCovers[currentAlbumIndex].scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'nearest'
-                        });
-                    }
-                }
-                
-                startAngle = angle;
-            }
-        });
-        
-        // Button click handlers
-        wheelCenter.addEventListener('click', () => {
-            if (currentView === 'menu') {
-                const selectedItem = menuItems[currentMenuItem].dataset.view;
-                
-                if (selectedItem === 'music') {
-                    // Music selected - show now playing with first album
-                    playAlbum(0);
-                } else if (selectedItem === 'albums') {
-                    // Albums selected - show album grid
-                    menuView.style.display = 'none';
-                    nowPlayingView.style.display = 'none';
-                    albumView.style.display = 'block';
-                    currentView = 'albums';
-                    currentAlbumIndex = 0;
-                }
-            } else if (currentView === 'albums') {
-                // Play selected album
-                playAlbum(currentAlbumIndex);
-            }
-        });
-        
-        menuBtn.addEventListener('click', () => {
-            if (currentView === 'nowPlaying' || currentView === 'albums') {
-                // Go back to menu
-                nowPlayingView.style.display = 'none';
-                albumView.style.display = 'none';
-                menuView.style.display = 'block';
-                currentView = 'menu';
-                
-                // Stop playback
-                if (isPlaying) {
-                    clearInterval(progressInterval);
-                    isPlaying = false;
-                    playBtn.textContent = '▶';
-                    document.querySelector('.album-art').classList.remove('playing');
-                }
-            }
-        });
-        
-        playBtn.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            playBtn.textContent = isPlaying ? '❚❚' : '▶';
+            paddlePlayerPos += deltaY;
             
-            const albumArt = document.querySelector('.album-art');
-            if (isPlaying) {
-                progressInterval = setInterval(updateProgress, 1000);
-                albumArt.classList.add('playing');
-            } else {
-                clearInterval(progressInterval);
-                albumArt.classList.remove('playing');
-            }
-        });
-        
-        nextBtn.addEventListener('click', () => {
-            // Play next album
-            currentAlbumIndex = (currentAlbumIndex + 1) % albums.length;
-            playAlbum(currentAlbumIndex);
-        });
-        
-        prevBtn.addEventListener('click', () => {
-            // Play previous album
-            currentAlbumIndex = (currentAlbumIndex - 1 + albums.length) % albums.length;
-            playAlbum(currentAlbumIndex);
-        });
-        
-        // Album upload handling
-        uploadBtn.addEventListener('click', () => {
-            albumInput.click();
-        });
-        
-        albumInput.addEventListener('change', (e) => {
-            const files = e.target.files;
+            // Ограничение движения ракетки
+            if (paddlePlayerPos < 0) paddlePlayerPos = 0;
+            if (paddlePlayerPos > gameHeight - 80) paddlePlayerPos = gameHeight - 80;
             
-            if (files.length > 0) {
-                // Show loading state
-                uploadBtn.textContent = 'Uploading...';
-                
-                // Process each file
-                Array.from(files).forEach((file, index) => {
-                    const reader = new FileReader();
-                    
-                    reader.onload = (event) => {
-                        // Create a new album entry
-                        const newAlbum = {
-                            title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
-                            artist: "Uploaded Album",
-                            cover: event.target.result
-                        };
-                        
-                        albums.push(newAlbum);
-                        
-                        // Re-render albums when all are processed
-                        if (index === files.length - 1) {
-                            setTimeout(() => {
-                                renderAlbums();
-                                uploadBtn.textContent = 'Add Albums';
-                                
-                                // Show success animation
-                                uploadBtn.style.backgroundColor = '#4CAF50';
-                                setTimeout(() => {
-                                    uploadBtn.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
-                                }, 1000);
-                            }, 500);
-                        }
-                    };
-                    
-                    reader.readAsDataURL(file);
-                });
-            }
+            touchY = newTouchY;
         });
         
-        // Album cover click handler (for desktop)
-        albumGrid.addEventListener('click', (e) => {
-            const albumCover = e.target.closest('.album-cover');
-            if (albumCover) {
-                const index = parseInt(albumCover.dataset.index);
-                currentAlbumIndex = index;
-                playAlbum(index);
-            }
-        });
-        
-        // Initialize
-        updateMenuSelection();
-        totalTimeDisplay.textContent = formatTime(totalTime);
-        currentTimeDisplay.textContent = formatTime(currentTime);
+        // Запуск игры по кнопке
+        startButton.addEventListener('click', initGame);
     </script>
 </body>
 </html>
