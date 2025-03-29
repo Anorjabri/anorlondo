@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>iPod Classic Web Player</title>
+    <title>iPod Classic with Album Selection</title>
     <style>
         * {
             margin: 0;
@@ -57,6 +57,8 @@
         .menu-items {
             list-style: none;
             padding: 10px 0;
+            overflow-y: auto;
+            height: 180px;
         }
         
         .menu-item {
@@ -64,6 +66,7 @@
             display: flex;
             justify-content: space-between;
             font-size: 14px;
+            transition: all 0.3s ease;
         }
         
         .menu-item.active {
@@ -79,6 +82,72 @@
             display: none;
             padding: 20px;
             text-align: center;
+            height: 180px;
+            overflow: hidden;
+        }
+        
+        .album-view {
+            display: none;
+            padding: 10px;
+            text-align: center;
+            height: 180px;
+            overflow: hidden;
+        }
+        
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 10px;
+            overflow-y: auto;
+            height: 160px;
+        }
+        
+        .album-cover {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #555;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .album-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .album-cover.active {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+        
+        .album-cover::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .album-cover.active::after {
+            opacity: 1;
+        }
+        
+        .album-title {
+            font-size: 10px;
+            margin-top: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .album-art {
@@ -88,6 +157,8 @@
             margin: 0 auto 15px;
             border-radius: 3px;
             overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .album-art img {
@@ -98,6 +169,7 @@
         
         .song-info {
             margin-bottom: 15px;
+            transition: all 0.3s ease;
         }
         
         .song-title {
@@ -124,6 +196,7 @@
             width: 30%;
             background: #333;
             border-radius: 3px;
+            transition: width 0.5s linear;
         }
         
         .time-display {
@@ -242,6 +315,43 @@
             background: #666;
             border-radius: 2px;
         }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            position: absolute;
+            bottom: 240px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            z-index: 10;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .album-cover.loading {
+            animation: pulse 1.5s infinite;
+        }
+        
+        .album-art.playing {
+            animation: pulse 2s infinite;
+        }
     </style>
 </head>
 <body>
@@ -251,32 +361,28 @@
         <div class="screen">
             <div class="screen-header">
                 <span>iPod</span>
-                <span>3:45 PM</span>
+                <span id="time-display">3:45 PM</span>
             </div>
             
             <div class="menu-view">
                 <ul class="menu-items">
-                    <li class="menu-item active">
+                    <li class="menu-item active" data-view="music">
                         <span>Music</span>
                         <span class="icon">></span>
                     </li>
-                    <li class="menu-item">
-                        <span>Photos</span>
+                    <li class="menu-item" data-view="albums">
+                        <span>Albums</span>
                         <span class="icon">></span>
                     </li>
-                    <li class="menu-item">
-                        <span>Videos</span>
+                    <li class="menu-item" data-view="artists">
+                        <span>Artists</span>
                         <span class="icon">></span>
                     </li>
-                    <li class="menu-item">
-                        <span>Podcasts</span>
+                    <li class="menu-item" data-view="playlists">
+                        <span>Playlists</span>
                         <span class="icon">></span>
                     </li>
-                    <li class="menu-item">
-                        <span>Extras</span>
-                        <span class="icon">></span>
-                    </li>
-                    <li class="menu-item">
+                    <li class="menu-item" data-view="settings">
                         <span>Settings</span>
                         <span class="icon">></span>
                     </li>
@@ -285,18 +391,18 @@
             
             <div class="now-playing">
                 <div class="album-art">
-                    <img src="https://via.placeholder.com/120" alt="Album Art">
+                    <img id="now-playing-art" src="https://via.placeholder.com/120" alt="Album Art">
                 </div>
                 <div class="song-info">
-                    <div class="song-title">Song Title</div>
-                    <div class="song-artist">Artist Name</div>
+                    <div class="song-title" id="now-playing-title">Song Title</div>
+                    <div class="song-artist" id="now-playing-artist">Artist Name</div>
                 </div>
                 <div class="progress-container">
                     <div class="progress-bar"></div>
                 </div>
                 <div class="time-display">
-                    <span>1:23</span>
-                    <span>3:45</span>
+                    <span id="current-time">1:23</span>
+                    <span id="total-time">3:45</span>
                 </div>
                 <div class="controls">
                     <div class="control-btn">◀◀</div>
@@ -304,7 +410,16 @@
                     <div class="control-btn">▶▶</div>
                 </div>
             </div>
+            
+            <div class="album-view">
+                <div class="album-grid" id="album-grid">
+                    <!-- Albums will be added here dynamically -->
+                </div>
+            </div>
         </div>
+        
+        <button class="upload-btn" id="uploadBtn">Add Albums</button>
+        <input type="file" class="file-input" id="albumInput" accept="image/*" multiple>
         
         <div class="click-wheel" id="clickWheel">
             <button class="wheel-btn menu-btn">MENU</button>
@@ -321,19 +436,58 @@
         const menuItems = document.querySelectorAll('.menu-item');
         const menuView = document.querySelector('.menu-view');
         const nowPlayingView = document.querySelector('.now-playing');
+        const albumView = document.querySelector('.album-view');
+        const albumGrid = document.getElementById('album-grid');
         const playBtn = document.querySelector('.play-btn');
         const nextBtn = document.querySelector('.next-btn');
         const prevBtn = document.querySelector('.prev-btn');
         const menuBtn = document.querySelector('.menu-btn');
         const wheelCenter = document.querySelector('.wheel-center');
         const progressBar = document.querySelector('.progress-bar');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const albumInput = document.getElementById('albumInput');
+        const nowPlayingArt = document.getElementById('now-playing-art');
+        const nowPlayingTitle = document.getElementById('now-playing-title');
+        const nowPlayingArtist = document.getElementById('now-playing-artist');
+        const currentTimeDisplay = document.getElementById('current-time');
+        const totalTimeDisplay = document.getElementById('total-time');
+        const timeDisplay = document.getElementById('time-display');
         
         // State
         let currentMenuItem = 0;
+        let currentAlbumIndex = 0;
         let isPlaying = false;
-        let currentTime = 83; // in seconds
-        let totalTime = 225; // in seconds
+        let currentTime = 83;
+        let totalTime = 225;
         let progressInterval;
+        let albums = [];
+        let currentView = 'menu';
+        
+        // Sample album data (will be replaced with uploaded albums)
+        const sampleAlbums = [
+            { title: "Classic Hits", artist: "Various Artists", cover: "https://via.placeholder.com/150/86fde8/333333?text=Classic+Hits" },
+            { title: "Summer Vibes", artist: "Beach Band", cover: "https://via.placeholder.com/150/acb6e5/333333?text=Summer+Vibes" },
+            { title: "Jazz Night", artist: "Smooth Players", cover: "https://via.placeholder.com/150/e0acb6/333333?text=Jazz+Night" },
+            { title: "Rock Anthems", artist: "Guitar Heroes", cover: "https://via.placeholder.com/150/b6e0ac/333333?text=Rock+Anthems" }
+        ];
+        
+        // Initialize with sample albums
+        albums = [...sampleAlbums];
+        renderAlbums();
+        
+        // Update time display
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = hours % 12 || 12;
+            timeDisplay.textContent = `${displayHours}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
+        }
+        
+        // Update clock immediately and then every minute
+        updateClock();
+        setInterval(updateClock, 60000);
         
         // Format time (seconds to MM:SS)
         function formatTime(seconds) {
@@ -346,12 +500,13 @@
         function updateProgress() {
             const progress = (currentTime / totalTime) * 100;
             progressBar.style.width = `${progress}%`;
-            document.querySelector('.time-display span:first-child').textContent = formatTime(currentTime);
+            currentTimeDisplay.textContent = formatTime(currentTime);
             
             if (currentTime >= totalTime) {
                 clearInterval(progressInterval);
                 isPlaying = false;
                 playBtn.textContent = '▶';
+                document.querySelector('.album-art').classList.remove('playing');
             } else {
                 currentTime++;
             }
@@ -362,6 +517,74 @@
             menuItems.forEach((item, index) => {
                 item.classList.toggle('active', index === currentMenuItem);
             });
+        }
+        
+        // Render albums to the grid
+        function renderAlbums() {
+            albumGrid.innerHTML = '';
+            albums.forEach((album, index) => {
+                const albumElement = document.createElement('div');
+                albumElement.className = 'album-cover';
+                albumElement.dataset.index = index;
+                albumElement.innerHTML = `
+                    <img src="${album.cover}" alt="${album.title}">
+                    <div class="album-title">${album.title}</div>
+                `;
+                albumGrid.appendChild(albumElement);
+                
+                // Add animation when album is added
+                setTimeout(() => {
+                    albumElement.style.animation = 'fadeIn 0.5s ease-out';
+                }, (index % 4) * 100);
+            });
+        }
+        
+        // Play selected album
+        function playAlbum(index) {
+            const album = albums[index];
+            
+            // Highlight selected album
+            document.querySelectorAll('.album-cover').forEach(cover => {
+                cover.classList.remove('active');
+            });
+            document.querySelector(`.album-cover[data-index="${index}"]`).classList.add('active');
+            
+            // Animate album art transition
+            const albumArt = document.querySelector('.album-art');
+            albumArt.style.transform = 'scale(0.8)';
+            albumArt.style.opacity = '0';
+            
+            setTimeout(() => {
+                nowPlayingArt.src = album.cover;
+                nowPlayingTitle.textContent = album.title;
+                nowPlayingArtist.textContent = album.artist;
+                
+                // Generate random song and duration for demo
+                const songNum = Math.floor(Math.random() * 12) + 1;
+                nowPlayingTitle.textContent = `Song ${songNum}`;
+                totalTime = 180 + Math.floor(Math.random() * 120);
+                currentTime = 0;
+                totalTimeDisplay.textContent = formatTime(totalTime);
+                currentTimeDisplay.textContent = formatTime(currentTime);
+                progressBar.style.width = '0%';
+                
+                albumArt.style.transform = 'scale(1)';
+                albumArt.style.opacity = '1';
+                
+                // Switch to now playing view
+                menuView.style.display = 'none';
+                albumView.style.display = 'none';
+                nowPlayingView.style.display = 'block';
+                currentView = 'nowPlaying';
+                
+                // Start playing if not already
+                if (!isPlaying) {
+                    isPlaying = true;
+                    playBtn.textContent = '❚❚';
+                    albumArt.classList.add('playing');
+                    progressInterval = setInterval(updateProgress, 1000);
+                }
+            }, 300);
         }
         
         // Wheel rotation handling
@@ -394,33 +617,75 @@
             
             // Only register significant rotations to prevent jitter
             if (Math.abs(normalizedDelta) > 15) {
-                if (normalizedDelta > 0) {
-                    // Rotated clockwise (down in iPod terms)
-                    currentMenuItem = Math.min(currentMenuItem + 1, menuItems.length - 1);
-                } else {
-                    // Rotated counter-clockwise (up in iPod terms)
-                    currentMenuItem = Math.max(currentMenuItem - 1, 0);
+                if (currentView === 'menu') {
+                    if (normalizedDelta > 0) {
+                        // Rotated clockwise (down in iPod terms)
+                        currentMenuItem = Math.min(currentMenuItem + 1, menuItems.length - 1);
+                    } else {
+                        // Rotated counter-clockwise (up in iPod terms)
+                        currentMenuItem = Math.max(currentMenuItem - 1, 0);
+                    }
+                    updateMenuSelection();
+                } else if (currentView === 'albums') {
+                    const albumCovers = document.querySelectorAll('.album-cover');
+                    if (normalizedDelta > 0) {
+                        // Rotated clockwise (down)
+                        currentAlbumIndex = Math.min(currentAlbumIndex + 1, albums.length - 1);
+                    } else {
+                        // Rotated counter-clockwise (up)
+                        currentAlbumIndex = Math.max(currentAlbumIndex - 1, 0);
+                    }
+                    
+                    // Scroll album into view
+                    if (albumCovers[currentAlbumIndex]) {
+                        albumCovers[currentAlbumIndex].scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'nearest'
+                        });
+                    }
                 }
-                updateMenuSelection();
+                
                 startAngle = angle;
             }
         });
         
         // Button click handlers
         wheelCenter.addEventListener('click', () => {
-            if (menuView.style.display !== 'none') {
-                if (currentMenuItem === 0) {
-                    // Music selected - show now playing
+            if (currentView === 'menu') {
+                const selectedItem = menuItems[currentMenuItem].dataset.view;
+                
+                if (selectedItem === 'music') {
+                    // Music selected - show now playing with first album
+                    playAlbum(0);
+                } else if (selectedItem === 'albums') {
+                    // Albums selected - show album grid
                     menuView.style.display = 'none';
-                    nowPlayingView.style.display = 'block';
+                    nowPlayingView.style.display = 'none';
+                    albumView.style.display = 'block';
+                    currentView = 'albums';
+                    currentAlbumIndex = 0;
                 }
+            } else if (currentView === 'albums') {
+                // Play selected album
+                playAlbum(currentAlbumIndex);
             }
         });
         
         menuBtn.addEventListener('click', () => {
-            if (nowPlayingView.style.display === 'block') {
+            if (currentView === 'nowPlaying' || currentView === 'albums') {
+                // Go back to menu
                 nowPlayingView.style.display = 'none';
+                albumView.style.display = 'none';
                 menuView.style.display = 'block';
+                currentView = 'menu';
+                
+                // Stop playback
+                if (isPlaying) {
+                    clearInterval(progressInterval);
+                    isPlaying = false;
+                    playBtn.textContent = '▶';
+                    document.querySelector('.album-art').classList.remove('playing');
+                }
             }
         });
         
@@ -428,44 +693,88 @@
             isPlaying = !isPlaying;
             playBtn.textContent = isPlaying ? '❚❚' : '▶';
             
+            const albumArt = document.querySelector('.album-art');
             if (isPlaying) {
                 progressInterval = setInterval(updateProgress, 1000);
+                albumArt.classList.add('playing');
             } else {
                 clearInterval(progressInterval);
+                albumArt.classList.remove('playing');
             }
         });
         
         nextBtn.addEventListener('click', () => {
-            // Simulate next track
-            currentTime = 0;
-            totalTime = 180 + Math.floor(Math.random() * 120);
-            document.querySelector('.song-title').textContent = 'New Song ' + (Math.floor(Math.random() * 10) + 1);
-            document.querySelector('.song-artist').textContent = 'Artist ' + (Math.floor(Math.random() * 5) + 1);
-            document.querySelector('.time-display span:last-child').textContent = formatTime(totalTime);
-            
-            if (isPlaying) {
-                clearInterval(progressInterval);
-                progressInterval = setInterval(updateProgress, 1000);
-            }
+            // Play next album
+            currentAlbumIndex = (currentAlbumIndex + 1) % albums.length;
+            playAlbum(currentAlbumIndex);
         });
         
         prevBtn.addEventListener('click', () => {
-            // Simulate previous track
-            currentTime = 0;
-            totalTime = 180 + Math.floor(Math.random() * 120);
-            document.querySelector('.song-title').textContent = 'Previous Song ' + (Math.floor(Math.random() * 10) + 1);
-            document.querySelector('.song-artist').textContent = 'Artist ' + (Math.floor(Math.random() * 5) + 1);
-            document.querySelector('.time-display span:last-child').textContent = formatTime(totalTime);
+            // Play previous album
+            currentAlbumIndex = (currentAlbumIndex - 1 + albums.length) % albums.length;
+            playAlbum(currentAlbumIndex);
+        });
+        
+        // Album upload handling
+        uploadBtn.addEventListener('click', () => {
+            albumInput.click();
+        });
+        
+        albumInput.addEventListener('change', (e) => {
+            const files = e.target.files;
             
-            if (isPlaying) {
-                clearInterval(progressInterval);
-                progressInterval = setInterval(updateProgress, 1000);
+            if (files.length > 0) {
+                // Show loading state
+                uploadBtn.textContent = 'Uploading...';
+                
+                // Process each file
+                Array.from(files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    
+                    reader.onload = (event) => {
+                        // Create a new album entry
+                        const newAlbum = {
+                            title: file.name.replace(/\.[^/.]+$/, ""), // Remove extension
+                            artist: "Uploaded Album",
+                            cover: event.target.result
+                        };
+                        
+                        albums.push(newAlbum);
+                        
+                        // Re-render albums when all are processed
+                        if (index === files.length - 1) {
+                            setTimeout(() => {
+                                renderAlbums();
+                                uploadBtn.textContent = 'Add Albums';
+                                
+                                // Show success animation
+                                uploadBtn.style.backgroundColor = '#4CAF50';
+                                setTimeout(() => {
+                                    uploadBtn.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+                                }, 1000);
+                            }, 500);
+                        }
+                    };
+                    
+                    reader.readAsDataURL(file);
+                });
+            }
+        });
+        
+        // Album cover click handler (for desktop)
+        albumGrid.addEventListener('click', (e) => {
+            const albumCover = e.target.closest('.album-cover');
+            if (albumCover) {
+                const index = parseInt(albumCover.dataset.index);
+                currentAlbumIndex = index;
+                playAlbum(index);
             }
         });
         
         // Initialize
         updateMenuSelection();
-        document.querySelector('.time-display span:last-child').textContent = formatTime(totalTime);
+        totalTimeDisplay.textContent = formatTime(totalTime);
+        currentTimeDisplay.textContent = formatTime(currentTime);
     </script>
 </body>
 </html>
